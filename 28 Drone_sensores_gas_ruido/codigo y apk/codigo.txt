@@ -1,0 +1,45 @@
+
+//variable de recepcion de datos y cariables de control de elevacion
+int option;
+int ruido=0;
+int dato =0;
+int sensor1 =0;
+int sensor2 =0;
+int sensor3 =0;
+void setup()
+{
+ //asignacion de comunicacion de datos entre arduino y antena bt
+  Serial.begin(9600);
+}
+void loop()
+{
+  dato = analogRead(A1); //gas
+  ruido = analogRead(A0);//ruido
+
+  if(dato>=56 && dato<=65)
+  {
+  sensor1=dato;
+  delay(50);
+  }
+  
+ //dioxido de carbono
+  if(dato>=74 && dato<=350)
+  {
+  sensor2=dato;
+  delay(50);
+  }
+
+  
+  //gas propano y butano
+  if(dato>=400)
+  {
+  sensor3=dato;
+  sensor2=350;
+  sensor1=65;
+  delay(50);
+  }
+  
+  Serial.println(String(" ")+String(ruido)+":"+String(sensor1)+":"+String(sensor2)+":"+String(sensor3));
+  delay(3000);
+   
+}

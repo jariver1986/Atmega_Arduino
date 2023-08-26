@@ -1,0 +1,32 @@
+
+//variable de recepcion de datos y cariables de control de elevacion
+int option;
+int sensor=0;
+int sensor2 =0;
+void setup()
+{
+ //asignacion de comunicacion de datos entre arduino y antena bt
+  Serial.begin(9600);
+}
+void loop()
+{
+  sensor = analogRead(A0);
+  sensor2 = analogRead(A1);
+  //si existe datos disponibles los leemos
+  if (Serial.available()>0)
+  {
+    //leemos la opcion enviada
+    option=Serial.read();
+    ///////////////////////////
+    if(option=='1') 
+    {
+      Serial.print(String(" ")+String(sensor));//+":"+String(sensor2)); // +String(sensor2)+":"+String(sensor3)+"A");
+      option=0;
+    }
+    if(option=='2') 
+    {
+      Serial.print(String(" ")+String(sensor2)); //+":"+String(sensor2)); // +String(sensor2)+":"+String(sensor3)+"A");
+      option=0;
+    }      
+  } 
+}

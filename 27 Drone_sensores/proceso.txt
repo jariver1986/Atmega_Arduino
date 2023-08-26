@@ -1,0 +1,39 @@
+Abono 50
+Pronostico dseado
+(tormenta, lluvioso, nublado, soleado)
+
+app primario
+selecion boton 1 Sensor x
+rx
+selecion boton 1 Sensor x
+rx
+selecion boton 1 Sensor x
+rx
+selecion boton 1 Sensor x
+rx
+
+calcula pronostico interno 
+Boton de presentacion (pronosticar)bot
+Se presenta el clima interno
+Mensaje de recomendacion.(pendiente dar)
+Se pronostica:
+(mensaje con imagen del clima)
+si el clima deseado y pronostocado son iguales
+Felicidades al parecer no tendras problemas con tu actividad.
+else
+se recomien tomar debidas precaucioones para la actividad
+
+
+Presentar armado en proto. 
+
+
+Seleccion de clima deseado con boton de comparacion
+Mensaje de resultado
+
+app secundario
+
+1. Revisar el Sensor UV que al parecer es el unico que no incrementa los datos.
+2. Sacar el prototipo del proto para dejar ordenados los cables.
+3. Revisar en el app que no debe mostrarse el sting sino que se active el botono de DATOS al momento que recibio la cadena (revisar si esto sirve cuando siga enviando datos por mas de 2 minutos que es el tiempo que requiere para dar datos exactos del clima)
+ok 4. Revisar en la app que los mensajes de RECOMENDACION  no muestre con una entrada de texto solo el texto.
+5. ADJUNTO EL ULTIMO AIA CON DISENO 

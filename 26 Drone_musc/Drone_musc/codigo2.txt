@@ -1,0 +1,247 @@
+#include <Servo.h>
+//+++++++++++++++++++++++++++++++++++++++++++++
+//variable de recepcion de datos y cariables de control de elevacion
+//+++++++++++++++++++++++++++++++++++++++++++++
+int option;//Inicicializacion de variable
+int led = 13;//Inicicializacion de variable
+int contador=0;//Inicicializacion de variable
+int contador2=85;//Inicicializacion de variable
+int contador3=90;//Inicicializacion de variable
+int inicio=0;//Inicicializacion de variable
+int centinela=0;//Inicicializacion de variable
+int sensor1 =0;
+int sensor2 =0;
+
+
+Servo miServo1;//Inicicializacion de sewrvomotor
+Servo miServo2;//Inicicializacion de sewrvomotor
+Servo miServo3;//Inicicializacion de sewrvomotor
+Servo miServo4;//Inicicializacion de sewrvomotor
+//+++++++++++++++++++++++++++++++++++++++++++++
+void inicio(contador2)
+{
+  miServo2.write(contador2);//Inicicializacion de sewrvomotor en algulo
+  delay(500);//retardo de acoplamiento de señal
+  contador2=contador2-20;//asigncion de valor de giro
+  delay(500);//retardo de acoplamiento de señal
+  miServo2.write(contador2);//Inicicializacion de sewrvomotor en algulo
+  Serial.println("izq");//asigncion de valor de giro
+  contador2=contador2-15;//asigncion de valor de giro
+  miServo2.write(contador2);//Inicicializacion de sewrvomotor en algulo
+  delay(500);//retardo de acoplamiento de señal
+  contador2=contador2+15;//asigncion de valor de giro
+  miServo2.write(contador2);//Inicicializacion de sewrvomotor en algulo
+  Serial.println("der");//envio de mensaje por consola
+} 
+  
+void setup()
+{
+  inicio();
+ //asignacion de comunicacion de datos entre arduino y antena bt
+  Serial.begin(9600);
+//Asignacion de pines del servomotor
+  miServo1.attach(3);//asigncion de pines de servomotor
+  miServo2.attach(5);//asigncion de pines de servomotor
+  miServo3.attach(2);//asigncion de pines de servomotor
+  miServo4.attach(9);//asigncion de pines de servomotor
+  //Posicionamiento inicial
+  miServo1.write(contador);  //Altura
+  miServo2.write(contador2); //giro en el eje
+  miServo3.write(contador3); //giro en el eje
+  contador2=contador2+20;//varible de incremento
+}
+//++++++++++++++++++++++++++++++++++++++++++++
+void desbloquear(angulo)
+{
+      if (centinela==0)//pregunta por estado logico dela variable
+      {
+       miServo1.write(angulo); //ejecucion de giro
+      delay(3000);
+      miServo1.write(0);//ejecucion de giro
+      delay(2000);
+      centinela=1;
+      }
+      
+  }
+//+++++++++++++++++++++++++++++++++++++++++++++
+  void estacionar(angulo2)
+  { 
+    miServo1.write(angulo2);//ejecucion de giro
+    while(angulo2>=0)
+    {angulo2=angulo2-10;
+    delay(500);
+    }
+    angulo2=0
+    contador=0;
+   }
+//+++++++++++++++++++++++++++++++++++++++++++++
+   void elevar(contador)
+   {
+      contador=contador+30;
+      if (contador>90)//limitantre de elevacion
+      {
+          contador=90;  //asignacion de angulo de giro
+      } 
+      miServo1.write(contador);//ejecucion de giro
+      Serial.println(contador);
+   }
+//+++++++++++++++++++++++++++++++++++++++++++++
+   void descender(contador)
+   {
+      contador=contador-10;
+      if (contador<0)//pregunta por estado logico dela variable
+      {
+          contador=0;  //asignacion de angulo de giro
+      }
+      miServo1.write(contador);//ejecucion de giro
+      Serial.println(contador); //impresion por consola
+    }
+//+++++++++++++++++++++++++++++++++++++++++++++
+   void giroizquierda()
+   {
+      contador3=contador3+70;//asignacion de angulo de giro
+      miServo3.write(contador3);//ejecucion de giro
+      delay(500);
+      contador3=contador3-70;//asignacion de angulo de giro
+      miServo3.write(contador3);//ejecucion de giro
+      Serial.println("adelante");//impresion por consola
+    }
+//+++++++++++++++++++++++++++++++++++++++++++++
+void giroderecha(contador3)
+{
+      contador3=contador3-70;//asignacion de angulo de giro
+      miServo3.write(contador3);//ejecucion de giro
+      delay(500);
+      contador3=contador3+70;//asignacion de angulo de giro
+      miServo3.write(contador3);//ejecucion de giro
+      Serial.println("atras");//impresion por consola
+}    
+//+++++++++++++++++++++++++++++++++++++++++++++
+void seteoinicializquierda()
+{
+      contador2=contador2+20;//asignacion de angulo de giro
+      miServo2.write(contador2);//ejecucion de giro
+      delay(300);
+      contador2=contador2-20;//asignacion de angulo de giro
+      miServo2.write(contador2);//ejecucion de giro
+      Serial.println("izq");//impresion por consola
+}
+//+++++++++++++++++++++++++++++++++++++++++++++
+void seteoinicialderecha()
+{
+       contador2=contador2-15;//asignacion de angulo de giro
+      miServo2.write(contador2);//ejecucion de giro
+      delay(200);
+      contador2=contador2+15;//asignacion de angulo de giro
+      miServo2.write(contador2);//ejecucion de giro
+      Serial.println("der"); //impresion por consola
+  }
+//+++++++++++++++++++++++++++++++++++++++++++++  
+void loop()
+{
+    sensor1 = analogRead(A0);
+    sensor2 = analogRead(A2);    
+    if(sensor1>800) //desbloquea
+    {
+      desbloquear(180);
+    }
+    if(sensor1>800) //desbloquea
+    {
+      elevar();
+      delay(1000);
+    }
+    if(sensor2<800) //
+    {
+      estacionar(0);
+    }
+    
+    if(option=='1') //pregunta por estado logico dela variable
+    {
+      elevar();
+    }
+    if(option=='2') //pregunta por estado logico dela variable
+    {
+      descender();
+    }
+    if(option=='X') //pregunta por estado logico dela variable
+    {
+      seteoinicializquierda();
+    }
+    if(option=='X') //pregunta por estado logico dela variable
+    {
+      seteoinicialderecha();     
+    }
+    if(option=='3') //pregunta por estado logico dela variable
+    {
+        giroizquierda();  
+    }
+    if(option=='4') //pregunta por estado logico dela variable
+    {
+        giroderecha();     
+    }
+     
+}
+//+++++++++++++FIN+++++++++++++++++++++++++++++
+
+
+prueba basica
+#include <Servo.h>
+int led = 13;//Inicicializacion de variable
+int sensor1 =0;
+int sensor2 =0;
+int contador=0;
+int contador2=0;
+Servo miServo1;//Inicicializacion de sewrvomotor
+Servo miServo2;//Inicicializacion de sewrvomotor
+
+void setup()
+{  
+  Serial.begin(9600);
+  miServo1.attach(3);//asigncion de pines de servomotor
+  miServo2.attach(5);//asigncion de pines de servomotor
+  miServo1.write(contador);  //Altura
+  miServo2.write(contador2); //giro en el eje
+  delay(2000);  
+}
+ 
+
+void loop()
+{
+    sensor1 = analogRead(A0);
+    Serial.println(sensor1);
+    delay(1000);
+}
+//+++++++++++++FIN+++++++++++++++++++++++++++++
+
+
+
+
+
+
+
+  sensor2 = analogRead(A1);
+    Serial.println(sensor2);
+    if (sensor2>limite1)
+    {
+      contador=contador-30;
+      if (contador<0)//limitantre de elevacion
+      {
+          contador=0;  //asignacion de angulo de giro
+      } 
+      miServo1.write(contador);//ejecucion de giro
+      //Serial.println(contador);
+    }
+    delay(400);
+    Serial.println();
+
+
+
+
+
+
+
+
+
+
+
+
