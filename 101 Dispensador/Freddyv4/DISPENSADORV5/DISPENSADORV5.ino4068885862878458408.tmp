@@ -1,0 +1,507 @@
+#include <Adafruit_MLX90614.h>
+#include <EEPROM.h>
+#include <Servo.h>
+#include <Wire.h>
+#include <SoftwareSerial.h>
+Adafruit_MLX90614 termometroIR = Adafruit_MLX90614();
+int distancia1=0;
+int distancia2=0;
+int rele1=40;
+int rele2=42;
+//SoftwareSerial miBT(10,11);// PARA inicializar el bluetooh
+Servo control1;
+int bandera1=0;
+int bandera2=0;
+int bandera3=0;
+int i=1;
+int i2=0;
+int TRIG1 = 22;
+int ECO1= 24;
+int TRIG2 = 26;
+int ECO2= 28;
+int pos0=30;
+int pos1=31;
+int pos2=32;
+float temperaturaAmbiente=0;
+float temperaturaObjeto=0;
+int mano=0;
+char blue=0;
+float TEMPPRUEBA=0;
+int cont=0;
+int p1=0;
+int p2=0;
+int p3=0;
+int p4=0;
+int contador =0;//avisa si no hay recepcion por parte de BT
+int dato=0;
+void setup() {
+    Serial.begin(9600);
+    Serial1.begin(9600);
+    termometroIR.begin(); // Iniciar termómetro infrarrojo con Arduino
+    pinMode(2, OUTPUT); // servo
+    //pinMode(38, INPUT); // sensor infarrojo
+    pinMode(TRIG1, OUTPUT);
+    pinMode(ECO1, INPUT);
+    pinMode(TRIG2, OUTPUT);
+    pinMode(ECO2, INPUT);
+    pinMode(pos0, OUTPUT);
+    pinMode(pos1, OUTPUT);
+    pinMode(pos2, OUTPUT);
+    pinMode(38,INPUT_PULLUP);
+    pinMode(rele1, OUTPUT);
+    pinMode(rele2, OUTPUT);
+    //digitalWrite(38, LOW);
+    digitalWrite(rele2, HIGH);
+    Wire.begin();// comunicacion I2C
+    control1.attach(2);
+    control1.write(60);
+    //miBT.begin(38400);// velocidad de comunicacion del bluetooh
+    delay(500);
+}
+//esta funcion es para medir distancia
+int medirdistancia (int TRIG, int ECO)
+{
+  int DURACION = 0;
+  int DISTANCIA = 0;
+  digitalWrite(TRIG, HIGH);
+  delay(1);
+  digitalWrite(TRIG, LOW);
+  DURACION = pulseIn(ECO, HIGH);
+  DISTANCIA= DURACION / 58.2;
+  delay(200);
+  return DISTANCIA;
+}
+
+//esta funcion es para detectar persona en un rango de 1mt
+int medirdistancia2 (int TRIG, int ECO)
+{
+int DURACION1 = 0;
+int DISTANCIA1 = 0;
+int rev1=0;
+nuevo:
+digitalWrite(TRIG, HIGH);
+delay(1);
+digitalWrite(TRIG, LOW);
+DURACION1 = pulseIn(ECO, HIGH);
+DISTANCIA1= DURACION1 / 58.2;
+delay(200);
+if (DISTANCIA1 > 100  || DISTANCIA1< 0 )
+{
+  goto nuevo;
+}return DISTANCIA1;
+}
+//procedimiento para repartir gel
+void repartirgel()
+{
+int revisar=0;
+int cont2=0;
+delay(250);
+Serial.println("gel");
+do{
+Serial1.println("l@05;---");  
+delay(250);
+if(Serial1.available())
+blue=Serial1.read();
+delay(250);
+}while(blue!='L');
+do {  
+digitalWrite(pos0, LOW);
+digitalWrite(pos1, HIGH);
+digitalWrite(pos2, HIGH);  
+revisar=medirdistancia(TRIG1, ECO1);
+ Serial.println(revisar);
+ if (digitalRead(38) == HIGH && revisar < 50)//sirve para detectar la mano en el dispensador mediante el sensor de movimiento
+{
+Serial.println("REPARTIENDO");  
+delay(250);
+control1.write(0);
+delay(400);
+control1.write(60);
+delay(400);
+control1.write(0);
+delay(400);
+control1.write(60);
+delay(400);
+goto fin;  
+}
+delay(100);
+cont2++;
+if (cont2==50)
+{
+do{
+Serial1.println("l@05;---");  
+delay(250);
+if(Serial1.available())
+blue=Serial1.read();
+delay(250);
+}while(blue!='L');//vuelve a repetir durante 5 segundo que de la mano
+cont2=0;  
+}
+}while(revisar < 50);
+revisar=medirdistancia(TRIG1, ECO1);
+Serial.println("mira sali");
+delay(250); 
+Serial.println(revisar); 
+fin:
+Serial1.println("m@05;---");// apagando mano en el dispensador
+delay(250);
+}
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+void loop() 
+{
+  /*
+digitalWrite(rele2, HIGH);//prendo y apagao reles para las luces
+digitalWrite(rele1, LOW);
+delay(1000);
+digitalWrite(rele1, HIGH);  
+delay(1000);
+digitalWrite(rele1, LOW);
+delay(1000);
+digitalWrite(pos0, HIGH);
+digitalWrite(pos1, LOW);
+digitalWrite(pos2, LOW);
+Serial.println("listo");
+*/
+/////////////////////////////////////////////////Lectura ultrasonico persona
+J:
+distancia1=medirdistancia(TRIG1, ECO1);
+//delay(250);
+delay(100);
+ Serial.println("ENCENDIENDO");
+do{
+  distancia1=medirdistancia(TRIG1, ECO1);
+  //Serial.println("ENCENDIENDO");
+  delay(250);
+  }while(distancia1>20);//para encender el equipo, con este me sercioro que todo este listo antes de conectar al bluetooh
+  
+Serial.println("ARDUINO DETECTA");
+digitalWrite(rele1, LOW);
+digitalWrite(rele2, LOW);
+//////////////////////////////////////////////////////////////////////////////////////////////////////////PROCESO PARA PASAR DE IMAGEN A(COVID)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////                      iMAGEN B(COLOCAR MANO EN SENSOR)
+do
+{
+  if ((contador == 0)||(contador>=14))
+  {
+    Serial1.print("b@05;---");  //IMAGEN DE CARGANDO
+    Serial.println("ARD PD IMAG");  //
+    delay(50);
+  }
+  contador++;
+  delay(100);
+  if(Serial1.available())
+  {
+    blue=Serial1.read();
+    delay(50);
+    Serial.println("ARD RX = "+String(blue)); 
+    delay(50);
+    Serial.println("CONT = "+String(contador));  
+    delay(50);
+    if(blue=="B"){contador=1;}
+  }  
+  if (contador>14)
+  {
+   contador=1;  
+   Serial.println("OUT");
+   delay(100);
+  }
+}while(blue!='B');
+blue=0;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////PROCESO PARA DETECTAR MANO EN SENSOR ULTRA2
+//////////////////////////////////////////////////////////////////////////////////////////////////////////
+Serial.println("COLOCAR MANO");
+do{
+  distancia2=medirdistancia(TRIG2, ECO2);
+  delay(250);
+  }while(distancia2>20);//
+Serial.println("MANO DETECTADA");
+//////////////////////////////////////////////////////////////////////////////////////////////////////////PROCESO PARA PASAR DE IMAGEN B(COLOCAR MANO EN SENSOR)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////                      iMAGEN C(MIDIENDO TEMPERATURA)
+do
+{
+  if ((contador == 0)||(contador>=14))
+  {
+    Serial1.print("c@05;---");  //IMAGEN DE MIDIENDO TEMEPRATURA
+    Serial.println("ARD PD IMAG");  //
+    delay(50);
+  }
+  contador++;
+  delay(100);
+  if(Serial1.available())
+  {
+    blue=Serial1.read();
+    delay(50);
+    Serial.println("ARD RX = "+String(blue)); 
+    delay(50);
+    Serial.println("CONT = "+String(contador));  
+    delay(50);
+    if(blue=="C"){contador=1;}
+  }  
+  if (contador>14)
+  {
+   contador=1;  
+   Serial.println("OUT");
+   delay(100);
+  }
+}while(blue!='C');
+blue=0;
+
+
+
+
+//////////////////////////////////////////////////////////////////////////////////////////////////////////PROCESO PARA MEDIR TEMPERATURA
+//////////////////////////////////////////////////////////////////////////////////////////////////////////                      
+float temp = 34.5;
+if (temp>=38)
+{goto grave;}
+//////////////////////////////////////////////////////////////////////////////////////////////////////////PROCESO PARA PASAR DE IMAGEN C(MIDIENDO TEMPERATURA)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////                      IMAGEN D(IMAGEN TEMP OK)
+//////////////////////////////////////////////////////////////////////////////////////////////////////////                      IMAGEN E(IMAGEN TEMP NG)
+do
+{
+  if ((contador == 0)||(contador>=14))
+  {
+    Serial1.print("d@"+String(temp)+";-");  //VALOR DE TEMPERATURA
+    Serial.println("ARD PD IMAG");  //
+    delay(50);
+  }
+  contador++;
+  delay(100);
+  if(Serial1.available())
+  {
+    blue=Serial1.read();
+    delay(50);
+    Serial.println("ARD RX = "+String(blue)); 
+    delay(50);
+    Serial.println("CONT = "+String(contador));  
+    delay(50);
+    if(blue=="D"){contador=1;}
+  }  
+  if (contador>14)
+  {
+   contador=1;  
+   Serial.println("OUT");
+   delay(100);
+  }
+}while(blue!='D');
+blue=0;
+
+delay(5000);
+Serial1.print("a@05;---");
+Serial.println("IMAGEN DE INICIO");
+goto J;
+
+///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+grave:
+do
+{
+  if ((contador == 0)||(contador>=14))
+  {
+    Serial1.print("e@"+String(temp)+";-");  //VALOR DE TEMPERATURA
+    Serial.println("ARD PD IMAG");  //
+    delay(50);
+  }
+  contador++;
+  delay(100);
+  if(Serial1.available())
+  {
+    blue=Serial1.read();
+    delay(50);
+    Serial.println("ARD RX = "+String(blue)); 
+    delay(50);
+    Serial.println("CONT = "+String(contador));  
+    delay(50);
+    if(blue=="E"){contador=1;}
+  }  
+  if (contador>14)
+  {
+   contador=1;  
+   Serial.println("OUT");
+   delay(100);
+  }
+}while(blue!='E');
+blue=0;
+
+
+delay(5000);
+Serial1.print("a@05;---");
+Serial.println("IMAGEN DE INICIO");
+goto J;
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+
+
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+/////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+delay(1000);
+Serial1.println("b@05;---");  //termogel apago pantalla termogel version encendiendo
+delay(250);
+digitalWrite(rele1, LOW);//COLOR VERDE O BLANCO
+digitalWrite(rele2, LOW);//COLOR ROJO
+delay(1000);  
+inicio:// etiqueta para regresar a la medicion despues de hacer todo el proceso de medicion de temperatura
+bandera1=0;
+digitalWrite(rele2, LOW);  
+delay (5000);
+digitalWrite(rele2, HIGH);
+//digitalWrite(rele2, LOW);  
+//delay (1000);
+//digitalWrite(rele2, HIGH);  
+digitalWrite(pos0, LOW);// esto es para enviar al arduino uno para visualizar en el lcd
+digitalWrite(pos1, HIGH);
+digitalWrite(pos2, LOW);
+if(p1==1)
+{// esto es para apagar las pantallas que esten en el procesp, es decir cuando el man se va sin hacer el procedimiento el equipo debe regresar a su estado inicial y apagar toda pantalla 
+  do{
+  p1=0;
+  Serial1.println("f@05;---");  
+  delay(250);
+  if(Serial1.available())
+  blue=Serial1.read();
+  delay(250);
+  }while(blue!='F');
+}
+medir:// aqui es para detectar a la persona
+delay (250);  
+do{
+  distancia1=medirdistancia2(TRIG1, ECO1);
+  Serial.println(distancia1);
+  p1=1;
+  delay(250);
+  Serial1.println("i@05;---");  //pantalla detec person ojo debes hacer la nueva esa pantalla la pusimos ultimo
+  delay(250);
+  if(Serial1.available())
+  blue=Serial1.read();
+  delay(250);
+  }while(distancia1>40);
+  delay(500);
+  do{//apago la pantalla de detectando perosna
+//Serial.println("entrando");
+//Serial1.println("        ");
+//delay(250);
+Serial1.println("k@05;---"); //  mano en el sensor por favor
+delay(250);
+if(Serial1.available())
+{blue=Serial1.read();
+delay(250);
+}
+}while(blue!='K');
+  delay(250);
+  digitalWrite(rele2, HIGH);
+  p3=1;
+  //Serial1.println("        ");
+  //delay(250);
+do{
+//Serial.println("entrando");
+//Serial1.println("        ");
+//delay(250);
+Serial1.println("e@05;---"); //  mano en el sensor por favor
+delay(250);
+if(Serial1.available())
+{blue=Serial1.read();
+delay(250);
+//goto banderas;
+}
+}while(blue!='E');
+//banderas:
+bandera1=1;
+distancia1=medirdistancia(TRIG1, ECO1);
+delay(250);
+cont=0;
+Serial.println("SIGUIENTE");
+Serial.println(distancia1);
+while(distancia1<=40&&bandera1==1){
+ Serial.println("SIGUIENTE2"); 
+ distancia1=medirdistancia(TRIG1, ECO1);
+ distancia2=medirdistancia(TRIG2, ECO2);
+ p1=1;
+ Serial.println(distancia1);
+ delay(250);
+ Serial.println(distancia2 );
+ delay(250);
+   if(distancia2<10){
+    cont=0;
+    bandera1=0;
+    goto medirtemp;
+    
+    }
+    delay(100);
+    cont++;
+    if(cont==6){
+    do{
+      Serial.println("4 segundos");
+      delay(250);
+      Serial1.println("ee@05;---"); // REPITE MANO SENSOR  
+      delay(250);
+      if(Serial1.available())
+        blue=Serial1.read();
+        delay(250);
+    }while(blue!='E');  
+     cont=0;
+    }
+     }
+digitalWrite(rele1, HIGH);//COLOR VERDE O BLANCO
+digitalWrite(rele2, LOW);//COLOR ROJO
+//delay(1000);
+goto inicio;     
+medirtemp:
+//Serial1.println("f@05;---");// apagar pantalla de pasos Y MANO SENSOR
+do{
+Serial1.println("f@05;---");  //apago la pantalla de poner mano en sensor
+delay(250);
+if(Serial1.available())
+blue=Serial1.read();
+delay(250);
+}while(blue!='F');
+delay(250);
+do{
+Serial1.println("g@05;---"); //midiendo temperatura
+delay(250);
+if(Serial1.available())
+blue=Serial1.read();
+delay(250);
+}while(blue!='G');
+//Serial1.println("g@05;---");// midiendo temperatura
+//delay(1000);
+do{
+Serial1.println("h@05;---");  //apagando midiendo temperatura
+delay(250);
+if(Serial1.available())
+blue=Serial1.read();
+delay(250);
+}while(blue!='H');
+//Serial1.println("h@05;---");// apagando temperatura
+digitalWrite(rele2, LOW);
+digitalWrite(pos0, HIGH);//pin lcd control al arduino uno
+digitalWrite(pos1, HIGH);
+digitalWrite(pos2, LOW);
+do{
+Serial1.println("j@05;---");  //i buena y j mala
+delay(250);
+if(Serial1.available())
+blue=Serial1.read();
+delay(250);
+}while(blue!='J');//midiendo temp
+TEMPPRUEBA=34.5;//d significa q voy enviar la temp, la app envia D, enviar E CORRECTO Y  F ALARMA
+Serial.println(TEMPPRUEBA);
+delay(1000);
+digitalWrite(pos0, LOW);
+digitalWrite(pos1, HIGH);
+digitalWrite(pos2, HIGH);
+do{
+Serial1.println("k@05;---");  //i buena y j mala
+delay(250);
+if(Serial1.available())
+blue=Serial1.read();
+delay(250);
+}while(blue!='K');
+//Serial1.println("k@05;---");
+repartirgel();
+goto inicio;
+}
