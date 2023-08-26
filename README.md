@@ -57,4 +57,4 @@
 # IDE
 - IDE: SKETCH
 # EXAMPLES
-- Example
+- Examples
