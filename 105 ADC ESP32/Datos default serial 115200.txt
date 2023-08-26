@@ -1,0 +1,94 @@
+rst:0x1 (POWERON_RESET),boot:0x13 (SPI_FAST_FLASH_BOOT)
+configsip: 0, SPIWP:0x00
+clk_drv:0x00,q_drv:0x00,d_drv:0x00,cs0_drv:0x00,hd_drv:0x00,wp_drv:0x00
+mode:DIO, clock div:2
+load:0x3ffc0000,len:0
+load:0x3ffc0000,len:920
+load:0x40078000,len:2624
+load:0x40098000,len:508
+entry 0x40098118
+I (74) heap_alloc_caps: Initializing heap allocator:
+I (74) heap_alloc_caps: Region 19: 3FFC03A0 len 0001FC60 tag 0
+I (75) heap_alloc_caps: Region 23: 3FFE8000 len 00010000 tag 1
+check b=0x3ffc03ac size=130116 ok
+check b=0x3ffdfff0 size=0 ok
+check b=0x3ffe800c size=65508 ok
+I (94) cpu_start: Pro cpu up.
+I (98) cpu_start: Single core mode
+I (103) cpu_start: Pro cpu start user code
+rtc v112 Sep 22 2016 16:08:39
+XTAL 40M
+I (137) cpu_start: Starting scheduler on PRO CPU.
+D (139) nvs: init start=6 count=3
+D (145) nvs: nvs_open misc 1
+D (145) nvs: nvs_get_str_or_blob log
+frc2_timer_task_hdl:3ffc4224, prio:22, stack:2048
+tcpip_task_hdlxxx : 3ffc4e58, prio:18,stack:2048
+phy_version: 123, Sep 13 2016, 20:01:58, 0
+D (265) nvs: nvs_open nvs.net80211 1
+D (266) nvs: nvs_get opmode 1
+D (266) nvs: nvs_get country 1
+D (267) nvs: nvs_get_str_or_blob sta.ssid
+D (271) nvs: nvs_get_str_or_blob sta.mac
+D (274) nvs: nvs_get sta.authmode 1
+D (277) nvs: nvs_get_str_or_blob sta.pswd
+D (281) nvs: nvs_get_str_or_blob sta.pmk
+D (285) nvs: nvs_get sta.chan 1
+D (288) nvs: nvs_get auto.conn 1
+D (291) nvs: nvs_get bssid.set 1
+D (294) nvs: nvs_get_str_or_blob sta.bssid
+D (297) nvs: nvs_get sta.phym 1
+D (300) nvs: nvs_get sta.phybw 1
+D (303) nvs: nvs_get_str_or_blob sta.apsw
+D (307) nvs: nvs_get_str_or_blob sta.apinfo
+D (311) nvs: nvs_get_str_or_blob ap.ssid
+D (315) nvs: nvs_get_str_or_blob ap.mac
+D (318) nvs: nvs_get_str_or_blob ap.passwd
+D (322) nvs: nvs_get_str_or_blob ap.pmk
+D (325) nvs: nvs_get ap.chan 1
+D (328) nvs: nvs_get ap.authmode 1
+D (331) nvs: nvs_get ap.hidden 1
+D (334) nvs: nvs_get ap.max.conn 1
+D (337) nvs: nvs_get bcn.interval 2
+D (341) nvs: nvs_get ap.phym 1
+D (343) nvs: nvs_get ap.phybw 1
+D (346) nvs: nvs_get ap.sndchan 1
+D (349) nvs: nvs_set_blob sta.mac 6
+D (353) nvs: nvs_set_blob ap.mac 6
+pp_task_hdl : 3ffc8710, prio:23, stack:8192
+get wifi mode: 2
+
+set wifi mode
+
+get wifi ap mac: 4F:33:77:77:05:B5
+
+get wifi ap ssid: ESP_7705B5
+
+get wifi ap password: 
+
+set wifi ap ...
+
+get wifi sta ssid: 
+
+get wifi sta password: 
+
+set wifi sta ...
+
+wifi start
+
+mode : sta(c4:4f:33:77:05:b5) + softAP(c6:4f:33:77:05:b5)
+D (385) event: SYSTEM_EVENT_STA_START
+V (388) event: enter default callback
+V (391) event: exit default callback
+D (394) event: SYSTEM_EVENT_AP_START
+V (398) event: enter default callback
+dhcp server start:(ip: 192.168.4.1, mask: 255.255.255.0, gw: 192.168.4.1)
+V (407) event: exit default callback
+mode : softAP(c6:4f:33:77:05:b5)
+D (414) event: SYSTEM_EVENT_STA_STOP
+V (417) event: enter default callback
+V (420) event: exit default callback
+start led blink task.
+
+start http server task.
+
