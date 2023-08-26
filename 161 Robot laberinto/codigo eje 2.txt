@@ -1,0 +1,97 @@
+int ir_sensor0 = A0;
+int ir_sensor1 = A1;  //izquierdo
+int ir_sensor2 = A2;  // derecho
+int ir_sensor3 = A3;
+
+int mi1 = 8; 
+int mi2 = 9; 
+int md1 = 6; 
+int md2 = 7;
+
+void setup()
+{
+  // inicia comunicaciones serie a 9600 bps
+Serial.begin(9600);
+pinMode(13, OUTPUT); 
+
+pinMode(mi1, OUTPUT); 
+pinMode(mi2, OUTPUT);
+pinMode(md1, OUTPUT); 
+pinMode(md2, OUTPUT);  
+  
+}
+
+void atras(){
+  digitalWrite(mi1, HIGH);
+  digitalWrite(mi2, LOW);
+  digitalWrite(md1, HIGH);
+  digitalWrite(md2, LOW);
+}
+void pare(){
+digitalWrite(mi1, LOW);
+digitalWrite(mi2, LOW);
+digitalWrite(md1, LOW);
+digitalWrite(md2, LOW);
+}
+
+void adelante(){
+digitalWrite(mi1, LOW);
+digitalWrite(mi2, HIGH);
+digitalWrite(md1, LOW);
+digitalWrite(md2, HIGH);
+}
+
+void izquierda(){
+  digitalWrite(mi1, LOW);
+  digitalWrite(mi2, HIGH);
+  digitalWrite(md1, LOW);
+  digitalWrite(md2, LOW);
+}
+void derecha(){
+  digitalWrite(mi1, LOW);
+  digitalWrite(mi2, LOW);
+  digitalWrite(md1, LOW);
+  digitalWrite(md2, HIGH);
+}
+void giro(){
+  digitalWrite(mi1, HIGH);
+  digitalWrite(mi2, LOW);
+  digitalWrite(md1, LOW);
+  digitalWrite(md2, HIGH);
+}
+void loop()
+{
+  int lectura0,cm0;
+  lectura0 = analogRead(ir_sensor0); // lectura del sensor 0
+  cm0 = pow(3027.4 / lectura0, 1.2134); // conversión a centímetros
+  Serial.print("Sensor 0: ");
+  Serial.println(cm0); // lectura del sensor 0
+
+  int lectura1,cm1;
+  lectura1 = analogRead(ir_sensor1); // lectura del sensor 1
+  cm1 = pow(3027.4 / lectura1, 1.2134); // conversión a centímetros
+  Serial.print("Sensor 1: ");
+  Serial.println(cm1); // lectura del sensor 1
+
+  int lectura2,cm2;
+  lectura2 = analogRead(ir_sensor2); // lectura del sensor 2
+  cm2 = pow(3027.4 / lectura2, 1.2134); // conversión a centímetros
+  Serial.print("Sensor 2: ");
+  Serial.println(cm2); // lectura del sensor 2
+  
+ if(cm1>0 && cm1<8){ //censor izquierdo
+  
+  derecha();
+ }
+    else{
+  adelante();   
+    }
+
+  if(cm2>0 && cm2<8){ //censor derecho
+  
+  izquierda();
+ }
+    else{
+  adelante();   
+    }
+}
