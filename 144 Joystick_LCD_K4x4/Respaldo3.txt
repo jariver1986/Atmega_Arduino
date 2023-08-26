@@ -1,0 +1,237 @@
+#include <Mouse.h>
+#include <LiquidCrystal_I2C.h> //Libreria para control de LCD
+#include <Wire.h>           //Libreria complemento para control de protocolo i2C
+#include <String.h>         //Libreria para manejo de cadena de caracteres
+#include <Keypad.h>   
+
+/////////////////////////////////////////////////////////////////////////////
+     byte fila[] = {11, 10, 9, 8};     
+     byte columna[] = { 7, 6, 5, 4};     
+     
+     char teclas [ 4][ 4 ] =
+          {
+              {'1','2','3','A'},
+              {'4','5','6','B'},
+              {'7','8','9','C'},
+              {'*','0','#','D'}
+          };
+Keypad teclado = Keypad(makeKeymap(teclas), fila, columna, 4, 4);
+/////////////////////////////////////////////////////////////////////////////
+
+LiquidCrystal_I2C lcd(0x27,20,4); // LCD
+ 
+
+// Define Pins
+
+//const int startEmulation = 2;      // switch to turn on and off mouse emulation
+const int mouseLeftButton = 12;    // input pin for the mouse left Button
+const int mouseRightButton = 13;    // input pin for the mouse left Button
+const int joystickX = A1;         // joystick X axis  
+const int joystickY = A0;         // joystick Y axis
+
+// parameters for reading the joystick:
+int cursorSpeed = 10;               // output speed of X or Y movement
+int responseDelay = 5;        // response delay of the mouse, in ms
+int threshold = cursorSpeed/4;      // resting threshold
+int center = cursorSpeed/2;         // resting position value
+boolean mouseIsActive = false;    // whether or not to control the mouse
+int lastSwitchState = LOW;        // previous switch state
+//          "hola buenos diias me ayuda repitiendo aquella parte, no entiendo                "
+String m1 = "Hola                                   .";
+String m2 = "Hola buenos dias me ayuda repitiendo aquella parte, no entiendo     .";
+String m3 = "Hola buenas tardes me ayuda repitiendo aquella parte, no entiendo   .";
+String m4 = "Hola buenas noches me ayuda repitiendo aquella parte, no entiendo   .";
+String m5 = "Disculpe ingeniero me permite salir de la clase un momento .";
+String m6 = "Ingeniero no me sale el codigo, me puede ayudar            .";
+String m7 = "Que calificacion obtuve en su materia                      .";
+String m8 = "Que cambios deberia de realizar en este codigo             .";
+String m9 = "Que deberia de realizar en esta pregunta                   .";
+String m0 = "No entiendo                            .";
+String mf = "@_;_";
+/////////////////////////////////////////////////////////////////////////////
+void imprime(String palabra)
+{
+  
+      for (int i = 0; i <= 19; i++)
+      {
+        lcd.setCursor(i, 0);lcd.print(palabra[i]);
+        delay(1);
+      }
+      for (int i = 0; i <= 19; i++)
+      {
+        lcd.setCursor(i, 1);lcd.print(palabra[i+20]);
+        delay(1);
+      }
+      for (int i = 0; i <= 19; i++)
+      {
+        lcd.setCursor(i, 2);lcd.print(palabra[i+20+20]);
+        delay(1);
+      }
+      for (int i = 0; i <= 19; i++)
+      {
+        lcd.setCursor(i, 3);lcd.print(palabra[i+20+20+20]);
+        delay(1);
+      }
+}
+/////////////////////////////////////////////////////////////////////////////
+void setup() {
+  Serial1.begin(9600);
+  //pinMode(startEmulation, INPUT_PULLUP);   // the switch pin
+  pinMode(mouseLeftButton, INPUT);  // the left mouse button pin
+  pinMode(mouseRightButton, INPUT);  // the left mouse button pin  
+  Mouse.begin();  // take control of the mouse
+
+  //LCD
+  lcd.init();
+  lcd.backlight();  //          
+  lcd.setCursor(0, 0);lcd.print("Desarrollo de recur ");
+  lcd.setCursor(0, 1);lcd.print("sos educativos de ");
+  lcd.setCursor(0, 2);lcd.print("apoyo de bajo coste");
+  lcd.setCursor(0, 3);lcd.print("para discapacitados");
+  
+  
+}
+/////////////////////////////////////////////////////////////////////////////
+void loop() 
+{
+
+//  Teclado 4x4
+  char pulsacion = teclado.getKey() ;
+
+  //LCD
+  if(pulsacion =='A')
+  {
+    mouseIsActive = true;
+  }
+  if(pulsacion =='B')
+  {
+    lcd.clear();
+  }
+  if(pulsacion =='C')
+  {
+    lcd.setCursor(0, 0);lcd.print("Desarrollo de recur ");
+    lcd.setCursor(0, 1);lcd.print("sos educativos de ");
+    lcd.setCursor(0, 2);lcd.print("apoyo de bajo coste");
+    lcd.setCursor(0, 3);lcd.print("para discapacitados");
+  
+  }
+  if(pulsacion =='D')
+  {
+    mouseIsActive = false;
+  }
+  
+  if(pulsacion =='1')
+  {
+    lcd.clear();
+    imprime(m1);
+    Serial1.println(m1+mf);
+    
+  }
+  if(pulsacion =='2')
+  {
+    imprime(m2);
+    Serial1.println(m2+mf);
+  }
+  if(pulsacion =='3')
+  {
+    imprime(m3);
+    Serial1.println(m3+mf);
+  }
+  if(pulsacion =='4')
+  {
+    imprime(m4);
+    Serial1.println(m4+mf);
+  }
+  if(pulsacion =='5')
+  {
+    imprime(m5);
+    Serial1.println(m5+mf);
+  }
+  if(pulsacion =='6')
+  {
+    imprime(m6);
+    Serial1.println(m6+mf);
+  }
+  if(pulsacion =='7')
+  {
+    imprime(m7);
+    Serial1.println(m7+mf);
+  }
+  if(pulsacion =='8')
+  {
+    imprime(m8);
+    Serial1.println(m8+mf);
+  }
+  if(pulsacion =='9')
+  {
+    imprime(m9);
+    Serial1.println(m9+mf);
+  }
+  if(pulsacion =='0')
+  {
+    imprime(m0);
+    Serial1.println(m0+mf);
+  }
+  if(pulsacion =='*')
+  {
+    Mouse.click();
+  }
+  if(pulsacion =='#')
+  {
+    Mouse.click(MOUSE_RIGHT);
+  }
+  
+  // read and scale the two axes:
+  int xReading = readAxis(A1);
+  int yReading = readAxis(A0);
+
+  // if the mouse control state is active, move the mouse:
+  if (mouseIsActive) 
+  {
+    Mouse.move(xReading, yReading, 0); // (x, y, scroll mouse wheel)
+  }  
+    /////////////////////////////////////////////////////// CLICK IZQUIERDO
+  
+  if (mouseIsActive) 
+  {
+    if (digitalRead(mouseLeftButton) == HIGH) 
+    {
+        Mouse.click();
+        delay(100);
+    }
+    /////////////////////////////////////////////////////// CLICK DERECHO
+    
+    if (digitalRead(mouseRightButton) == HIGH) 
+    {
+        Mouse.click(MOUSE_RIGHT);
+        delay(100);
+    }
+    //delay(responseDelay);
+   }
+}
+
+/*
+  reads an axis (0 or 1 for x or y) and scales the
+ analog input range to a range from 0 to 
+ */
+
+int readAxis(int thisAxis) 
+{
+  // read the analog input:
+  int reading = analogRead(thisAxis);
+
+  // map the reading from the analog input range to the output range:
+  reading = map(reading, 0, 1023, 0, cursorSpeed);
+
+  // if the output reading is outside from the
+  // rest position threshold,  use it:
+  int distance = reading - center;
+
+  if (abs(distance) < threshold) 
+  {
+    distance = 0;
+  }
+
+  // return the distance for this axis:
+  return distance;
+}
