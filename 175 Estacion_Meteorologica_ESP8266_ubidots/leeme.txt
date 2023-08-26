@@ -1,0 +1,1 @@
+proyecto libreria modificada tiene mqtt con envio de 5 decimales modificada las lubrerias compiladas para ese proyecto
