@@ -1,0 +1,36 @@
+#include <Servo.h>
+ 
+int const leftSensorPin = A0;
+int const rightSensorPin = A1;
+ 
+Servo myServo;
+ 
+int angle = 90;
+int leftSensorValue = 0;
+int rightSensorValue = 0;
+// Es casi imposible que left y right sean exactamente iguales por lo que el motor
+// no se detendra, le voy a poner un colchon en el que considere left = right para
+// que se detenga cuando esté en ese rango. Este valor se puede ir ajustando para lograr
+// la precisión deseada sin que perjudique el funcionamiento del sistema
+int colchon = 50;
+ 
+void setup(){
+  myServo.attach(11);
+  Serial.begin(9600);
+  // Ponemos inicialmente el motor en 2º, no usar 0, puede dar vibraciones en el motor
+  // si este no consigue alcanzar los 0º
+  myServo.write(angle);
+}
+ 
+void loop()
+{
+  Serial.print("angulo 0 grados");
+  myServo.write(0);
+  delay(3000); 
+  Serial.print("angulo 90 grados");
+  myServo.write(90);
+  delay(3000); 
+  Serial.print("angulo 180 grados");
+  myServo.write(180);
+  delay(3000); 
+}

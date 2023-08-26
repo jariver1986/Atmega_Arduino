@@ -1,0 +1,43 @@
+int option='1';
+int accesorio = 13;
+int engine = 12;
+int star = 8;
+ 
+void setup()
+{
+  Serial.begin(9600);
+  pinMode(star,OUTPUT);
+  pinMode(engine,OUTPUT);
+  pinMode(accesorio,OUTPUT);
+}
+//CLAVE 20151607    AÑO DIA MES
+void loop()
+{
+  if (Serial.available()>0)
+  {
+    option=Serial.read(); 
+    if(option=='1') 
+    {
+      digitalWrite(accesorio, HIGH);              
+      Serial.println('ACCESORIO \n');
+      delay(1000);
+      digitalWrite(engine, HIGH);              
+      Serial.println('ENGINE \n');
+      delay(1000);
+      digitalWrite(star, HIGH);              
+      Serial.println('ESTAR ON \n');
+      delay(500);
+      digitalWrite(star, LOW);              
+      Serial.println('ESTAR OFF \n');
+    }
+    if(option=='2') 
+    {
+      digitalWrite(engine, LOW);              
+      delay(200);
+      digitalWrite(accesorio,LOW);              
+      delay(200);
+      Serial.println('SISTEMA APAGADO\n');
+    }
+  }
+
+  }

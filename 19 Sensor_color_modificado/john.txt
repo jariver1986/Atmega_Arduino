@@ -1,0 +1,128 @@
+#include <FreqCount.h>
+
+
+
+/////////////////////////////////////////////////////////////////////
+
+int S0 = 8;//pinB
+int S1 = 9;//pinA
+int S2 = 12;//pinE
+int S3 = 11;//pinF
+int Out = 5;//pinC PARA EL ARDUINO MEGA SE CAMBIA POR EL PIN 47
+int LED = 13;//pinD
+int unChar;
+word absoluto;
+word ROJO;
+word VERDE;
+word AZUL;
+word color;
+
+
+void setup()
+{
+Serial.begin(9600);
+FreqCount.begin(10);
+
+
+//initialize pins
+pinMode(LED,OUTPUT); //LED pinD
+    
+//color mode selection
+pinMode(S2,OUTPUT); //S2 pinE
+pinMode(S3,OUTPUT); //s3 pinF
+    
+pinMode(Out, INPUT); //Frecuency Out pinC # 47 on Arduino Mega 2560
+    
+//communication freq (sensitivity) selection
+pinMode(S0,OUTPUT); //S0 pinB
+pinMode(S1,OUTPUT); //S1 pinA 
+}
+ 
+void loop() {
+  if (Serial.available() >= 0) 
+  {
+  // escucha la llegada de nuevos datos serie:
+  unChar = Serial.read();
+  // imprime el caracter:
+  
+    
+////////////////////////////////////////////////////////////// 
+    if (unChar == 'R') {
+      Serial.println("HOLa");
+         digitalWrite(LED, HIGH);
+         digitalWrite(S0, HIGH); //S0
+         digitalWrite(S1, HIGH); //S1 
+         digitalWrite(S2, LOW); // RED Filter select
+         digitalWrite(S3, LOW); // RED Filter select
+         delay(250);
+         absoluto = (FreqCount.read()/10)*2;
+         ROJO = absoluto;
+         unChar=0;
+         if(absoluto>255)
+           {
+           Serial.print("NADA");
+           //Serial.print(255);
+          
+         }
+         else
+           {
+           
+           //Serial.print('ROJO');
+           Serial.print("ROJO");
+         }
+         
+    }
+///////////////////////////////////////////////////////////
+    else if (unChar == 'G') {    
+         digitalWrite(LED, HIGH);
+         digitalWrite(S0, HIGH); //S0
+         digitalWrite(S1, HIGH); //S1 
+         digitalWrite(S2, HIGH); // GREEN Filter select
+         digitalWrite(S3, HIGH); // GREEN Filter select
+         delay(250);
+         absoluto = (FreqCount.read()/10)*2;
+         VERDE = absoluto;
+         if(absoluto>255)
+           {
+           
+           //Serial.print(255);
+           
+         }
+         else
+           {
+           //Serial.print('VERDE');
+         }
+         
+    }
+/////////////////////////////////////////////////////////////
+    else if (unChar == 'B') {     
+         digitalWrite(LED, HIGH);
+         digitalWrite(S0, HIGH); //S0
+         digitalWrite(S1, HIGH); //S1 
+         digitalWrite(S2, LOW); // BLUE Filter select
+         digitalWrite(S3, HIGH);// BLUE Filter select 
+         delay (250);
+         absoluto = (FreqCount.read()/10)*2;
+         AZUL = absoluto;
+         if(absoluto>255)
+           {
+           
+           //Serial.print(255);
+           
+         }
+         else
+           {
+           
+           //Serial.print('AZUL');
+           
+         }
+         
+    }   
+  }
+  if ((ROJO>VERDE)&&(ROJO>AZUL))
+  {
+      Serial.println("rojo");
+  }
+  unChar=0;
+  
+}

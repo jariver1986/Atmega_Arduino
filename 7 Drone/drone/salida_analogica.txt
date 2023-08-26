@@ -1,0 +1,76 @@
+int option;
+int elevacion=1024;         // define la variable
+int roll=131;         // define la variable
+int estacionar=0;
+int modo=0;
+
+void setup()
+{
+    Serial.begin(9600);
+   // pinMode(9, OUTPUT); 
+    
+}      
+  // no es necesario configurar
+  // entradas y salidas
+
+void loop()
+{
+  //si existe datos disponibles los leemos
+  if (Serial.available()>0)
+  {
+      //leemos la opcion enviada
+      option=Serial.read();
+      if(option=='p') 
+      {
+        elevacion=512;
+        delay(1000);
+        elevacion=1024;
+        Serial.println("Sisttema listo para volar");
+      }
+      if(option=='x') 
+      {
+        elevacion=1024;
+        Serial.println("Sisttema apagado");
+      }
+      if(option=='a') 
+      {
+        elevacion= elevacion-50; //sube
+        if (elevacion<100)
+        {
+            elevacion=100;    
+        }
+      }
+      if(option=='b') 
+      {
+        elevacion= elevacion+50;  //baja
+        if (elevacion>1024)
+        {
+            elevacion=1024;    
+        }
+      }
+      if(option=='c')           //
+      {
+        roll= roll-1; //sube
+      }
+      if(option=='d') 
+      {
+        roll= roll+1;  //baja
+      }
+      if(option=='e')  //estacionar 
+      {
+        while (elevacion<676)
+        {
+          elevacion = elevacion+1;
+          delay(10);  
+        }
+        estacionar=0;
+        
+      }
+      ////////////////CONTROL PALANCA
+      Serial.println(elevacion);
+      analogWrite(9, elevacion);        // escribe en el pin 10 'valor'  
+      analogWrite(10, roll);        // escribe en el pin 10 'valor'  
+      delay(100);
+  }
+  
+}
