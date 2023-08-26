@@ -1,6 +1,5 @@
 # Atmega_Arduino
 
-# Arduino
 - Modelo: UNO, MEGA, 
 - AVR Microcontroller: 8-bit with 32K Bytes In-System Programmable Flash
 - Link: https://www.microchip.com/en-us/product/atmega328p#document-table
