@@ -1,0 +1,339 @@
+#include <Wire.h>
+#include <OzOLED.h>
+#include <Servo.h>
+#include <Ultrasonic.h>
+int distancia1=0;
+int distancia2=0;
+int distancia3=0;
+int distancia4=0;
+int distancia5=0;
+int distancia6=0;
+int distancia7=0;
+int distancia8=0;
+int distancia9=0;
+int distancia10=0;
+Ultrasonic ultrasonic1(5,6,23200); 
+Ultrasonic ultrasonic2(7,8,23200); 
+Ultrasonic ultrasonic3(9,10,23200);
+Ultrasonic ultrasonic4(11,12,23200);
+Ultrasonic ultrasonic5(22,23,23200);
+Ultrasonic ultrasonic6(24,25,23200);
+Ultrasonic ultrasonic7(26,27,23200);
+Ultrasonic ultrasonic8(28,29,23200);
+Ultrasonic ultrasonic9(30,31,23200);
+Ultrasonic ultrasonic10(32,33,23200);
+
+int option = 0;
+int sonido = 2;
+Servo miServo1;
+Servo miServo2;
+
+void setup(void)
+{
+  Serial.begin(9600);   // We'll send debugging information via the Serial monitor
+  pinMode(sonido, OUTPUT);
+  miServo1.attach(3);
+  miServo2.attach(4);
+  miServo1.write(90);
+  miServo2.write(0);
+  digitalWrite(sonido, LOW);
+  //++++++++++++++++++++++++++++++
+  OzOled.init();  //initialze SEEED OLED display
+  OzOled.setNormalDisplay();
+  //OzOled.setHorizontalMode(); 
+  OzOled.clearDisplay();
+  //OzOled.printString("SISTEMA PARQUEO");
+  delay(1000);
+}
+
+void alarma()
+{
+
+  digitalWrite(sonido, HIGH);
+  delay(200);
+  digitalWrite(sonido, LOW);
+  delay(200);
+  
+}
+void lectura()
+{
+distancia1 = ultrasonic1.Ranging(CM);
+delay(100);
+distancia2 = ultrasonic2.Ranging(CM);
+delay(100);
+distancia3 = ultrasonic3.Ranging(CM);
+delay(100);
+distancia4 = ultrasonic4.Ranging(CM);
+delay(100);
+distancia5 = ultrasonic5.Ranging(CM);
+delay(100);
+distancia6 = ultrasonic6.Ranging(CM);
+delay(100);
+distancia7 = ultrasonic7.Ranging(CM);
+delay(100);
+distancia8 = ultrasonic8.Ranging(CM);
+delay(100);
+distancia9 = ultrasonic9.Ranging(CM);
+delay(100);
+distancia10 = ultrasonic10.Ranging(CM);
+delay(100);
+}
+void loop(void)
+{
+  if (Serial.available() > 0)
+  {
+    //leemos la opcion enviada
+    option = Serial.read();
+    if (option == '1')
+    {
+      miServo1.write(0);
+      delay(3000);
+      miServo1.write(90);
+      delay(3000);
+      option = 0;
+    }
+    if (option == '2')
+    {
+      miServo2.write(90);
+      delay(3000);
+      miServo2.write(0);
+      delay(3000);
+      option = 0;
+    }
+    if (option == '3')
+    {
+      alarma();
+      option = 0;
+    }
+  }
+  if (option == '4')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia2<10)||(distancia3<10)||(distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == '5')//bloqueo total
+    {
+      lectura();
+      if((distancia2<10)||(distancia3<10)||(distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == '6')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia3<10)||(distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == '7')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia2<10)||(distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == '8')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia2<10)||(distancia3<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == '9')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia2<10)||(distancia3<10)||(distancia4<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'A')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia2<10)||(distancia3<10)||(distancia4<10)||(distancia5<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'B')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia2<10)||(distancia3<10)||(distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'C')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia2<10)||(distancia3<10)||(distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'D')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia2<10)||(distancia3<10)||(distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'E')//bloqueo total
+    {
+      lectura();
+      if((distancia1<10)||(distancia2<10)||(distancia3<10)||(distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'a')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:10 Ocup:00");
+      option=0;
+    }
+    if (option == 'b')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:09 Ocup:01");
+      option=0;
+    }
+    if (option == 'c')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:08 Ocup:02");
+      option=0;
+    }
+    if (option == 'd')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:07 Ocup:03");
+      option=0;
+    }
+    if (option == 'e')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:06 Ocup:04");
+      option=0;
+    }
+    if (option == 'f')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:05 Ocup:05");
+      option=0;
+    }
+    if (option == 'g')//bloqueo total
+    {
+      OzOled.clearDisplay();
+     OzOled.printString(" Lib:04 Ocup:06");
+      option=0;
+    }
+    if (option == 'h')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:03 Ocup:07");
+      option=0;
+    }
+    if (option == 'i')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:02 Ocup:08");
+      option=0;
+    }
+    if (option == 'j')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:01 Ocup:09");
+      option=0;
+    }
+    if (option == 'k')//bloqueo total
+    {
+      OzOled.clearDisplay();
+      OzOled.printString(" Lib:00 Ocup:10");
+      option=0;
+    }
+//+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+if (option == 'l')//bloqueo total
+    {
+      lectura();
+      if((distancia3<10)||(distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'm')//bloqueo total
+    {
+      lectura();
+      if((distancia4<10)||(distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'n')//bloqueo total
+    {
+      lectura();
+      if((distancia5<10)||(distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'o')//bloqueo total
+    {
+      lectura();
+      if((distancia6<10)||(distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'p')//bloqueo total
+    {
+      lectura();
+      if((distancia7<10)||(distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'q')//bloqueo total
+    {
+      lectura();
+      if((distancia8<10)||(distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 'r')//bloqueo total
+    {
+      lectura();
+      if((distancia9<10)||(distancia10<10))
+      {
+        alarma();
+      }     
+    }
+    if (option == 's')//bloqueo total
+    {
+      lectura();
+      if(distancia10<10)
+      {
+        alarma();
+      }     
+    }
+
+
+    
+   
+}
+
+
+
+
+
+
+

@@ -1,0 +1,9 @@
+AT+SAPBR=3,1,"Contype","GPRS"
+AT+SAPBR=3,1,"APN","internet.claro.com.ec"
+AT+SAPBR =1,1
+AT+SAPBR=2,1
+AT+HTTPINIT
+AT+HTTPPARA="CID",1
+AT+HTTPPARA="URL",http://www.aplisys.net/pcs/recibe_get2.php?var1=7777777.00&var2=8888888.00
+AT+HTTPACTION=0
+AT+HTTPREAD
