@@ -1,0 +1,67 @@
+
+#include <ESP8266WiFi.h>
+#include <ESP8266mDNS.h>
+#include <WiFiUdp.h>
+
+int option=0;
+int valvula1=1;
+int valvula2=2;
+
+const char* ssid = "INTERNET CNT";             //!!!!!!!!!!!!!!!!!!!!! modify this
+const char* password = "cualeslaclave";                //!!!!!!!!!!!!!!!!!!!!!modify this
+ 
+int ledPin = D4;          //connect led pin to d4 and ground
+WiFiServer server(80);
+
+ 
+void setup() 
+{
+  //Serial.begin(115200);
+  Serial.begin(115200);
+  delay(10);
+  WiFi.mode(WIFI_STA);
+  WiFi.begin(ssid, password);
+  server.begin();
+
+    Serial.println("Hola car...");
+  pinMode(valvula1,OUTPUT); 
+  pinMode(valvula2,OUTPUT); 
+
+}
+
+ 
+void loop() 
+{
+  // Check if a client has connected
+  //WiFiClient client = server.available();
+  //client.flush(); 
+  //Serial.println("");
+  
+  if (Serial.available()>0)
+  {
+    //leemos la opcion enviada
+    option=Serial.read();
+    if(option=='1') 
+    {
+      digitalWrite(valvula1, LOW);
+      delay(1000);
+      digitalWrite(valvula1, HIGH);
+      
+      Serial.println("ok1");
+      option=0;
+    }
+    if(option=='2') 
+    {
+      digitalWrite(valvula2, LOW);
+      Serial.println("ok2");
+      
+      delay(1000);
+      digitalWrite(valvula2, HIGH);
+      option=0;
+    }
+  } 
+ 
+}
+
+
+///////////////////////////////////////////////////////////////////////////////
